@@ -1,0 +1,26 @@
+{
+  "name": "quimm",
+  "version": "0.0.0",
+  "homepage": "https://github.com/UNLP-IADM/quimm",
+  "authors": [
+    "IADM 2014"
+  ],
+  "description": "A mobile web app designed to easily notificate peers about (geo-located) events in real-time",
+  "main": "src/app.js",
+  "keywords": [
+    "mobile",
+    "web",
+    "app",
+    "events",
+    "real-time"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
