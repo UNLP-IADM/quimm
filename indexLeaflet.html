@@ -4,8 +4,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 	<link rel="stylesheet" type="text/css" href="estilo.css">
+	<style>
+	.hidden {
+		visibility: hidden
+	}
+	</style>
 </head>
 <body onload="modelo.cargarMapa()">
+	  <div id="textoMarkerDivId" class="hidden" >
+	    Texto: <input type="text" id="textoMarkerId">
+	  <input type="button" onclick="modelo.saveText()" value="Guardar">
+	</div>
 	<div id="map"></div>
 </body>
 <script type="text/javascript" src="src/implementacion.js"></script>

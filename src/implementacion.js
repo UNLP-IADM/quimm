@@ -1,6 +1,8 @@
 var modelo = (function (){
 	
 	var map= L.map('map');
+	var markers = new Array();
+	var ultimoMark;
 	
 	cargarMapaPrivada = function(){
 		//var map = L.map('map').setView([-34.532, -58.53], 12);
@@ -33,15 +35,32 @@ var modelo = (function (){
 	
 	//es un menseje de error para cuando el gsp falla
 	onLocationError = function(e) {
-    alert("ERROR!!!!!");
+		alert("ERROR!!!!!");
 	}
 	
 	//en este método se debería cargar/abrir una pantalla donde se muestre el formulario
 	onMapClick = function(e){
-		alert("clickaste en " + e.latlng);	
+		//alert("clickaste en " + e.latlng);
+		document.getElementById("textoMarkerDivId").className = "";
+		document.getElementById("textoMarkerId").value = "";
+		markers[e.latlng] = (L.marker(e.latlng).addTo(map));
+		ultimoMark = markers[e.latlng];
+		markers[e.latlng].on('dblclick', function(e){
+			document.getElementById("textoMarkerDivId").className = "";
+			document.getElementById("textoMarkerId").value = "";
+			console.log(markers[e.latlng]);
+			ultimoMark = markers[e.latlng];
+		});
+	}
+
+	saveMarkerText = function(){
+		console.log("BOTON!");
+		document.getElementById("textoMarkerDivId").className = "hidden";				
+		ultimoMark.bindPopup(document.getElementById("textoMarkerId").value);
 	}
 
 	return{
 		cargarMapa: cargarMapaPrivada,
+		saveText: saveMarkerText,
 	}
 })();
