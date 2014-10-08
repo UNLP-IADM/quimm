@@ -2,20 +2,29 @@
 <head>
 	<link rel="stylesheet" href="vendor/leaflet-0.7.3/leaflet.css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<link rel="stylesheet" type="text/css" href="estilo.css">
-	<style>
-	.hidden {
-		visibility: hidden
-	}
-	</style>
+	<link rel="stylesheet" type="text/css" href="estilo.css">	
 </head>
 <body onload="modelo.cargarMapa()">
-	  <div id="textoMarkerDivId" class="hidden" >
-	    Texto: <input type="text" id="textoMarkerId">
-	  <input type="button" onclick="modelo.saveText()" value="Guardar">
-	</div>
-	<div id="map"></div>
+
+	<div class="pt-wrapper">
+		<div class="pt-trigger-container">			
+			<button class="pt-trigger" data-animation="2" data-goto="-2">Volver Pagina</button>
+			<button class="pt-trigger" data-animation="1" data-goto="-1">Avanzar Pagina</button>
+		</div>
+
+		<div class="pt-page pt-page-1">
+			MAPA!<div id="map"></div>
+		</div>
+		<div class="pt-page pt-page-2">
+			<div id="textoMarkerDivId">
+				Texto: <input type="text" id="textoMarkerId">
+				<input type="button" onclick="modelo.saveText()" value="Guardar">
+			</div>
+		</div>		
+	</div>	
 </body>
 <script src="vendor/leaflet-0.7.3/leaflet.js"></script>
 <script type="text/javascript" src="src/implementacion.js"></script>
+<script src="vendor/jquery/dist/jquery.js"></script>
+<script src="src/transition.js"></script>
 </html>
