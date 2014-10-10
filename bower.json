@@ -24,7 +24,8 @@
     "tests"
   ],
   "dependencies": {
-    "leaflet-0.7.3": "http://leaflet-cdn.s3.amazonaws.com/build/leaflet-0.7.3.zip",
-    "jquery": "~2.1.1"
+    "leaflet": "~0.7.3",
+    "jquery": "~2.1.1",
+    "PageTransitions": "*"
   }
 }
