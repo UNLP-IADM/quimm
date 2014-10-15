@@ -7,13 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="vendor/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="vendor/Snap.js/snap.css" />
   </head>
   <body onload="modelo.cargarMapa()">
-  <div id="map"></div>
+
+  <div class="snap-drawers">
+      <div class="snap-drawer snap-drawer-left">
+        <h1>Prueba</h1>
+          <button onClick="closeLeft();">Cerrar</button>
+      </div>
+  </div>
+
+  <div id="content" class="snap-content">
+      <div id="map"></div>
+  </div>
 
   <script type="text/javascript" src="vendor/leaflet/dist/leaflet.js"></script>
   <script type="text/javascript" src="src/geolocation.js"></script>
   <script type="text/javascript" src="src/implementacion.js"></script>
   <script src="vendor/jquery/dist/jquery.js"></script>
+  <script src="vendor/Snap.js/snap.js"></script>
+  <script src="src/app.js"></script>
+
   </body>
 </html>
