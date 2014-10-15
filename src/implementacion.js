@@ -16,13 +16,13 @@ var modelo = (function () {
             maxZoom: 18
         }).addTo(map);
 
-        //crear un punto  de prueba en el mapa (lo crea por vicente lopez)
-        L.marker([-34.532, -58.53]).addTo(map)
-            .bindPopup('version 3 popup. <br> Easily customizable.')
-            .openPopup();
+        var marker = L.marker([-34.9343485,-57.9402335]).on('click', onClick);
+        function onClick(e) {
+            snapper.open('right');
+        }
+        marker.addTo(map)
 
         map.on('locationfound', onLocationFound);
-        map.on('locationerror', onLocationError);
         map.on('dblclick', onMapDoubleClick);
     }
 
@@ -34,11 +34,6 @@ var modelo = (function () {
         L.marker(e.latlng).addTo(map)
             .bindPopup("You are within " + radius + " meters from this point").openPopup();
         L.circle(e.latlng, radius).addTo(map);
-    }
-
-    //es un menseje de error para cuando el gsp falla
-    onLocationError = function (e) {
-        alert("ERROR!!!!!");
     }
 
     //en este método se debería cargar/abrir una pantalla donde se muestre el formulario

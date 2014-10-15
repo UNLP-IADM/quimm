@@ -5,27 +5,3 @@ body {
 html, body, #map {
     height: 100%;
 }
-
-.snap-drawers
-{
-    width: 100%;
-    height: 100%;
-}
-
-/* Show "Left" drawer for the "Right" drawer in the demo */
-.snapjs-right .snap-drawer-left {
-    display: block;
-    right: 0;
-    left: auto;
-}
-
-/* Hide the actual "Right" drawer in the demo */
-.snapjs-right .snap-drawer-right {
-    display: none;
-}
-
-/* Show the "Drag" background in the demo */
-#content {
-    background: #BFC7D8 75% no-repeat;
-}
-

@@ -4,11 +4,10 @@
 
 var snapper = new Snap({
     element: document.getElementById('content'),
-    hyperextensible: false,
-    disable: 'right'
+    hyperextensible: false
 });
 
-function closeLeft()
+function closeSnap()
 {
     snapper.close();
 }
