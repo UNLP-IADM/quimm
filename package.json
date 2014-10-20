@@ -4,7 +4,8 @@
   "description": "A mobile web app designed to easily notificate peers about (geo-located) events in real-time",
   "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "bower install"
   },
   "repository": {
     "type": "git",
