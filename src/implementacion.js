@@ -1,4 +1,4 @@
-var modelo = (function () {
+var modelo = (function ($) {
 
     var map = L.map('map', {
         doubleClickZoom: false
@@ -6,20 +6,22 @@ var modelo = (function () {
 
     var markers = new Array();
     var ultimoMark;
-		var miLat;
-		var miLng;
+	var miLat;
+	var miLng;
+	//me guardo la latitud y longitud de cuando hago doble click para crear el objeto Marcador despues
+	var tempLatLng;	
+	
+	var iconos = L.Icon.extend({
+		options: {
+			iconSize:     [43, 50], // size of the icon
+			shadowSize:   [50, 64], // size of the shadow
+			iconAnchor:   [22, 22], // point of the icon which will correspond to marker's location
+			shadowAnchor: [4, 62],  // the same for the shadow
+			popupAnchor:  [-2, -13] // point from which the popup should open relative to the iconAnchor
+		}
+	});
 		
-		var iconos = L.Icon.extend({
-			options: {
-       	iconSize:     [43, 50], // size of the icon
-				shadowSize:   [50, 64], // size of the shadow
-				iconAnchor:   [22, 22], // point of the icon which will correspond to marker's location
-				shadowAnchor: [4, 62],  // the same for the shadow
-				popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-			}
-		});
-		
-		var goodIcon = new iconos({iconUrl: 'imagenes/flag-export.png'}),
+	var goodIcon = new iconos({iconUrl: 'imagenes/flag-export.png'}),
     neutralIcon = new iconos({iconUrl: 'imagenes/smiley_neutral.png'}),
     badIcon = new iconos({iconUrl: 'imagenes/caution.png'});
 		
@@ -62,6 +64,7 @@ var modelo = (function () {
 
         snapper.open('left');
         console.log('Agregamos el evento');
+		tempLatLng=e.latlng;		
         /*document.getElementById("textoMarkerDivId").className = "";
          document.getElementById("textoMarkerId").value = "";
          markers[e.latlng] = (L.marker(e.latlng).addTo(map));
@@ -91,7 +94,25 @@ var modelo = (function () {
 			L.marker([e.latlng.lat, e.latlng.lng], {icon: neutralIcon}).addTo(map);
 		}*/
 		//-----------------
-		
+	
+	guardarMarcador = function () {		
+		var titulo = $("#titulo-marcador").val();
+		var descripcion = $("#descripcion-marcador").val();
+		var categoria = $("#select-marcador").val();			
+		//lo hacemos así porque icon: pide el nombre de la variable
+		if(categoria == "goodIcon"){
+			markers[tempLatLng] = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: goodIcon}).addTo(map);			
+		}else{
+			if(categoria == "neutralIcon"){
+				markers[tempLatLng] = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: neutralIcon}).addTo(map);		
+			}else{
+				markers[tempLatLng] = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: badIcon}).addTo(map);		
+			}
+		}		
+		markers[tempLatLng].bindPopup('<strong>'+titulo+'</strong><br/>'+descripcion);
+		snapper.close();
+	}
+	
     saveMarkerText = function () {
         console.log("BOTON!");
         document.getElementById("textoMarkerDivId").className = "hidden";
@@ -108,4 +129,4 @@ var modelo = (function () {
         saveText: saveMarkerText,
 				irAMiPosicion: irAMiPosicionPrivada
     }
-})();
+})(jQuery);

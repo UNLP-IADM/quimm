@@ -11,14 +11,26 @@
   </head>
   <body onload="modelo.cargarMapa()">
 
-  <div class="snap-drawers">
-      <div class="snap-drawer snap-drawer-left">
-        <h1>Form para agregar un nuevo punto</h1>
-          <button onClick="closeSnap();">Cerrar</button>
+  <div class="snap-drawers">      
+	  <div class="snap-drawer snap-drawer-left">
+        <h3>Datos del nuevo Marcador</h3>
+		  <label class="etiquetas-marcador">Titulo:</label><br/> 
+		  <input id="titulo-marcador" type="text" name="titulo"><br>		  
+		  <label class="etiquetas-marcador">Descripcion:</label><br/>
+		  <textarea id="descripcion-marcador" name="descripcion" rows="8" cols="30"></textarea><br>
+		  <label class="etiquetas-marcador">Categoría:</label><br/>
+		  <select id="select-marcador">
+		    <option value="goodIcon">Bueno</option>		    			
+			<option value="neutralIcon">Neutral</option>		
+			<option value="badIcon">Malo</option>		    			
+		  </select>  
+          <button class="button-snap" onClick="guardarMarcador();">Guardar</button>
+		  <button class="button-snap" onClick="closeSnap();">Cerrar</button>          
       </div>
+	  
       <div class="snap-drawer snap-drawer-right">
-          <h1>Visualiza un punto dado</h1>
-          <button onClick="closeSnap();">Cerrar</button>
+          <h3>Datos del Marcador seleccionado</h3>
+          <button class="button-snap" onClick="closeSnap();">Cerrar</button>
       </div>
   </div>
 
@@ -29,9 +41,9 @@
 
   <script type="text/javascript" src="vendor/leaflet/dist/leaflet.js"></script>
   <script type="text/javascript" src="src/geolocation.js"></script>
-  <script type="text/javascript" src="src/implementacion.js"></script>
   <script src="vendor/jquery/dist/jquery.js"></script>
   <script src="vendor/snapjs/snap.js"></script>
+  <script type="text/javascript" src="src/implementacion.js"></script>  
   <script src="src/app.js"></script>
 
   </body>
