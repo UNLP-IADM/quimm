@@ -5,3 +5,8 @@ body {
 html, body, #map {
     height: 100%;
 }
+#home{
+	position: absolute;
+	top: 0%;
+	left: 50%;
+}

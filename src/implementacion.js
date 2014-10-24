@@ -6,6 +6,8 @@ var modelo = (function () {
 
     var markers = new Array();
     var ultimoMark;
+		var miLat;
+		var miLng;
 
     cargarMapaPrivada = function () {
         //var map = L.map('map').setView([-34.532, -58.53], 12);
@@ -29,6 +31,8 @@ var modelo = (function () {
     //función que retorna la posición actual donde se esta posicionado y creo un punto en esta
     onLocationFound = function (e) {
         console.log(e.latlng.lng);
+				miLat=e.latlng.lng;
+				miLng=e.latlng.lat;
         console.log(e.latlng.lat);
         var radius = e.accuracy / 2;
         L.marker(e.latlng).addTo(map)
@@ -58,9 +62,15 @@ var modelo = (function () {
         document.getElementById("textoMarkerDivId").className = "hidden";
         ultimoMark.bindPopup(document.getElementById("textoMarkerId").value);
     }
+		
+		irAMiPosicionPrivada = function(){		
+			console.log(miLat);
+			map.setView(new L.LatLng(miLng, miLat), 16);
+		}
 
     return{
         cargarMapa: cargarMapaPrivada,
-        saveText: saveMarkerText
+        saveText: saveMarkerText,
+				irAMiPosicion: irAMiPosicionPrivada
     }
 })();
