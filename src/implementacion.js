@@ -8,7 +8,21 @@ var modelo = (function () {
     var ultimoMark;
 		var miLat;
 		var miLng;
-
+		
+		var iconos = L.Icon.extend({
+			options: {
+       	iconSize:     [43, 50], // size of the icon
+				shadowSize:   [50, 64], // size of the shadow
+				iconAnchor:   [22, 22], // point of the icon which will correspond to marker's location
+				shadowAnchor: [4, 62],  // the same for the shadow
+				popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+			}
+		});
+		
+		var goodIcon = new iconos({iconUrl: 'imagenes/flag-export.png'}),
+    neutralIcon = new iconos({iconUrl: 'imagenes/smiley_neutral.png'}),
+    badIcon = new iconos({iconUrl: 'imagenes/caution.png'});
+		
     cargarMapaPrivada = function () {
         //var map = L.map('map').setView([-34.532, -58.53], 12);
 
@@ -26,6 +40,9 @@ var modelo = (function () {
 
         map.on('locationfound', onLocationFound);
         map.on('dblclick', onMapDoubleClick);
+				//-----------------
+				//map.on('click',onMapClick);
+				//-----------------
     }
 
     //función que retorna la posición actual donde se esta posicionado y creo un punto en esta
@@ -57,6 +74,24 @@ var modelo = (function () {
          });*/
     }
 
+		//-----------------PARA ELIMINAR, ES DE PRUBA PARA VER COMO SE VEN LOS ÍCONOS
+		//en este método se debería cargar/abrir una pantalla donde se muestre el formulario
+		/*onMapClick = function(e){
+			//alert("clickaste en " + e.latlng);
+			//document.getElementById("textoMarkerDivId").className = "";
+			//document.getElementById("textoMarkerId").value = "";
+			markers[e.latlng] = L.marker([e.latlng.lat, e.latlng.lng], {icon: neutralIcon}).addTo(map);
+			ultimoMark = markers[e.latlng];
+			markers[e.latlng].on('dblclick', function(e){
+				document.getElementById("textoMarkerDivId").className = "";
+				document.getElementById("textoMarkerId").value = "";
+				console.log(markers[e.latlng]);
+				ultimoMark = markers[e.latlng];
+			});
+			L.marker([e.latlng.lat, e.latlng.lng], {icon: neutralIcon}).addTo(map);
+		}*/
+		//-----------------
+		
     saveMarkerText = function () {
         console.log("BOTON!");
         document.getElementById("textoMarkerDivId").className = "hidden";
