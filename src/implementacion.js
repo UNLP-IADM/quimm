@@ -1,3 +1,28 @@
+//Este codigo permite mantener abiertos todos los popups simultaneamente.
+L.Map = L.Map.extend({
+    openPopup: function (popup, latlng, options) { 
+        if (!(popup instanceof L.Popup)) {
+        var content = popup;
+
+        popup = new L.Popup(options).setContent(content);
+        }
+
+        if (latlng) {
+        popup.setLatLng(latlng);
+        }
+
+        if (this.hasLayer(popup)) {
+        return this;
+        }
+
+        // NOTE THIS LINE : COMMENTING OUT THE CLOSEPOPUP CALL
+        //this.closePopup(); 
+        this._popup = popup;
+        return this.addLayer(popup);        
+    }
+});
+
+
 var modelo = (function (){
 	
 	var map= L.map('map');
