@@ -44,5 +44,11 @@ html, body, #map {
 	height: 30px;
 }
 .etiquetas-marcador{
-	font-size: 18px;
+	font-size: 18px;	
+}
+.datos-marcador{
+	font-size: 18px;	
+}
+#contenedor{
+	background:#B5DAFF;	
 }

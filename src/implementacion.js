@@ -104,9 +104,17 @@ var modelo = (function ($) {
 		snapper.open('right');
 		marker = markers[e.latlng];
 		
-		document.getElementById("descripcion").innerHTML = "<h3>Datos de marcador: "
-		+e.latlng+"</h3>"+"<h4>Titulo: "+marker.title+"</h4><br/><h4>Descripcion: "
-		+marker.description+"</h4><br/><h4> Categoria: "+marker.category+"</h4>";		
+		$("#d-titulo-marcador").text(marker.title);
+		$("#d-descripcion-marcador").text(marker.description);
+		if(marker.category == "goodIcon"){
+			$("#d-categoria-marcador").text("Evento bueno");
+		}else{
+			if(marker.category == "badIcon"){
+				$("#d-categoria-marcador").text("Evento malo");
+			}else{
+				$("#d-categoria-marcador").text("Evento neutral");
+			}		
+		}			
 	}
 	
 	guardarMarcador = function () {		
