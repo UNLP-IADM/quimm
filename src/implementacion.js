@@ -61,10 +61,13 @@ var modelo = (function ($) {
     }
 
     //en este método se debería cargar/abrir una pantalla donde se muestre el formulario
-  onMapDoubleClick = function (e) {
-    snapper.open('left');
-    console.log('Agregamos el evento');
-		tempLatLng=e.latlng;		
+    onMapDoubleClick = function (e) {
+      snapper.open('left');
+      console.log('Agregamos el evento');
+	  tempLatLng=e.latlng;
+	  
+	  $("#titulo-marcador").val("");
+	  $("#descripcion-marcador").val("");
 	}
 	/*document.getElementById("textoMarkerDivId").className = "";
 	 document.getElementById("textoMarkerId").value = "";
@@ -99,30 +102,37 @@ var modelo = (function ($) {
 	//formatea el texto a mostrar en el snapper de la derecha
 	onclickMarker = function(e){
 		snapper.open('right');
-		document.getElementById("descripcion").innerHTML = "<h3>Datos de marcador: "+e.latlng+"</h3>" 
-		//faltarían recuperar los datos de la base de datos(titulo, descripción, categoría)
+		marker = markers[e.latlng];
+		
+		document.getElementById("descripcion").innerHTML = "<h3>Datos de marcador: "
+		+e.latlng+"</h3>"+"<h4>Titulo: "+marker.title+"</h4><br/><h4>Descripcion: "
+		+marker.description+"</h4><br/><h4> Categoria: "+marker.category+"</h4>";		
 	}
 	
 	guardarMarcador = function () {		
-		var titulo = $("#titulo-marcador").val();
-		var descripcion = $("#descripcion-marcador").val();
-		var categoria = $("#select-marcador").val();			
+		var categoria = $("#select-marcador").val();
 		//lo hacemos así porque icon: pide el nombre de la variable
 		if(categoria == "goodIcon"){
-			var marker = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: goodIcon}).addTo(map);		
-			markers[tempLatLng] = marker;			
-			marker.on('click', onclickMarker);
-  	}else{
+			var markerLeaflet = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: goodIcon}).addTo(map);			
+  	    }else{
 			if(categoria == "neutralIcon"){
-				var marker = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: neutralIcon}).addTo(map);		
-				markers[tempLatLng] = marker;			
-				marker.on('click', onclickMarker);
+				var markerLeaflet = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: neutralIcon}).addTo(map);		
 			}else{
-				var marker = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: badIcon}).addTo(map);		
-				markers[tempLatLng] = marker;			
-				marker.on('click', onclickMarker);
+				var markerLeaflet = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: badIcon}).addTo(map);		
 			}
-		}		
+		}
+		markerLeaflet.on('click', onclickMarker);
+		
+		var marker = new MarkerObject(
+		$("#titulo-marcador").val(),
+		$("#descripcion-marcador").val(),		
+		$("#select-marcador").val(),
+		tempLatLng.lat,
+		tempLatLng.lng,
+		markerLeaflet);
+		
+		markers[tempLatLng] = marker;		
+		
 		//markers[tempLatLng].bindPopup('<strong>'+titulo+'</strong><br/>'+descripcion);
 		snapper.close();
 	}
