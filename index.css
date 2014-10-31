@@ -9,6 +9,7 @@ html, body, #map {
 	position: absolute;
 	top: 0%;
 	left: 50%;
+	width: 45px;
 }
 .button-snap{
 	border: none;
@@ -44,5 +45,4 @@ html, body, #map {
 }
 .etiquetas-marcador{
 	font-size: 18px;
-	
 }
