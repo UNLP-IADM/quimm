@@ -111,6 +111,9 @@ var modelo = (function () {
 
     markers[tempLatLng] = marker;
 
+    ConexionBackend.iniciar();
+    ConexionBackend.guardarSuceso(marker);
+
     //markers[tempLatLng].bindPopup('<strong>'+titulo+'</strong><br/>'+descripcion);
     snapper.close();
   }
