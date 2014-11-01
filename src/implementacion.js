@@ -41,19 +41,9 @@ var modelo = (function () {
     //-----------------
   }
 
-  //función que retorna la posición actual donde se esta posicionado y creo un punto en esta
-  onLocationFound = function (e) {
-    console.log(e.latlng.lng);
-    miLat=e.latlng.lng;
-    miLng=e.latlng.lat;
-    console.log(e.latlng.lat);
-    var radius = e.accuracy / 2;
-    L.marker(e.latlng).addTo(map).bindPopup("You are within " + radius + " meters from this point").openPopup();
-    L.circle(e.latlng, radius).addTo(map);
-  }
-
-  //en este método se debería cargar/abrir una pantalla donde se muestre el formulario
-  onMapDoubleClick = function (e) {
+  // en este método se debería cargar/abrir una pantalla
+  // donde se muestre el formulario
+  crearSuceso = function (e) {
     snapper.open('left');
     console.log('Agregamos el evento');
     tempLatLng=e.latlng;
@@ -62,8 +52,9 @@ var modelo = (function () {
     document.getElementById("descripcion-marcador").value = "";
   }
 
-  //formatea el texto a mostrar en el snapper de la derecha
-  onclickMarker = function(e){
+  // Muestra la información del suceso
+  // formatea el texto a mostrar en el snapper de la derecha
+  mostrarSuceso = function (e){
     snapper.open('right');
     marker = markers[e.latlng];
 
@@ -79,6 +70,22 @@ var modelo = (function () {
       }
     }
   }
+
+
+  //función que retorna la posición actual donde se esta posicionado y creo un punto en esta
+  onLocationFound = function (e) {
+    console.log(e.latlng.lng);
+    miLat=e.latlng.lng;
+    miLng=e.latlng.lat;
+    console.log(e.latlng.lat);
+    var radius = e.accuracy / 2;
+    L.marker(e.latlng).addTo(map).bindPopup("Estás a aprox. " + radius + " metros de este punto.").openPopup();
+    L.circle(e.latlng, radius).addTo(map);
+  }
+
+  // Asociaciones de eventos con funciones del modelo:
+  onMapDoubleClick = crearSuceso;
+  onclickMarker = mostrarSuceso;
 
   guardarMarcador = function () {
     var categoria = document.getElementById("select-marcador").value;
@@ -108,12 +115,6 @@ var modelo = (function () {
     snapper.close();
   }
 
-  saveMarkerText = function () {
-    console.log("BOTON!");
-    document.getElementById("textoMarkerDivId").className = "hidden";
-    ultimoMark.bindPopup(document.getElementById("textoMarkerId").value);
-  }
-
   irAMiPosicionPrivada = function(){
     console.log(miLat);
     map.setView(new L.LatLng(miLng, miLat), 16);
@@ -121,7 +122,6 @@ var modelo = (function () {
 
   return{
     cargarMapa: cargarMapaPrivada,
-    saveText: saveMarkerText,
     irAMiPosicion: irAMiPosicionPrivada
   }
 })();
