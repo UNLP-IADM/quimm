@@ -59,7 +59,7 @@ ConexionBackend = (function() {
       return _consultaReactiva('sucesos', {}).result;
     },
     guardarSuceso: function(objeto) {
-      return _insertar('suceso', {
+      return _insertar('sucesos', {
         title: objeto.title,
         description: objeto.category,
         lat: objeto.lat,
