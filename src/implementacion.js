@@ -11,6 +11,7 @@ var modelo = (function () {
   map = L.map('map', {
     doubleClickZoom: false
   });
+
   markers = new Array();
   iconos = L.Icon.extend({
     options: {
@@ -25,20 +26,32 @@ var modelo = (function () {
   neutralIcon = new iconos({iconUrl: 'imagenes/smiley_neutral.png'});
   badIcon = new iconos({iconUrl: 'imagenes/caution.png'});
 
-  cargarMapaPrivada = function () {
-    //var map = L.map('map').setView([-34.532, -58.53], 12);
+  cargarPuntosGuardados = function() {
+    var puntos = ConexionBackend.sucesos();
+    for (var i=0; i < puntos.length; i++) {
+      var pos = puntos[i].ubicacion.coordinates;
+      markers.push(L.marker([pos[1], pos[0]], {icon: puntos[i].categoria}))
+    }
+  }
 
+  cargarMapaPrivada = function () {
     //centra el mapa donde estas ubicado
     map.locate({setView: true, maxZoom: 16});
     L.tileLayer('http://{s}.tiles.mapbox.com/v3/federicoruf.jl3l85oh/{z}/{x}/{y}.png', {
-        maxZoom: 18
-        }).addTo(map);
+      maxZoom: 18
+    }).addTo(map);
 
     map.on('locationfound', onLocationFound);
     map.on('dblclick', onMapDoubleClick);
     //-----------------
     //map.on('click',onMapClick);
     //-----------------
+    // Inicia la conexión con el backend junto a una
+    // suscripción a sucesos locales (cuando el geolocalizador esté listo)
+    Geolocation.onCurrentPosition( function( currentPosition ) {
+      //ConexionBackend.iniciar( { suscripciones: [ [ 'sucesosSegunUbicacion', currentPosition, 10000 ] ] } );
+      ConexionBackend.iniciar( { suscripciones: [ [ 'todosLosSucesos' ] ], onConnection: cargarPuntosGuardados } );
+    });
   }
 
   // en este método se debería cargar/abrir una pantalla
@@ -81,6 +94,7 @@ var modelo = (function () {
     var radius = e.accuracy / 2;
     L.marker(e.latlng).addTo(map).bindPopup("Estás a aprox. " + radius + " metros de este punto.").openPopup();
     L.circle(e.latlng, radius).addTo(map);
+
   }
 
   // Asociaciones de eventos con funciones del modelo:
@@ -111,8 +125,8 @@ var modelo = (function () {
 
     markers[tempLatLng] = marker;
 
-    ConexionBackend.iniciar();
-    ConexionBackend.guardarSuceso(marker);
+    var d = ConexionBackend.guardarSuceso(marker);
+    console.log(d);
 
     //markers[tempLatLng].bindPopup('<strong>'+titulo+'</strong><br/>'+descripcion);
     snapper.close();
@@ -125,6 +139,7 @@ var modelo = (function () {
 
   return{
     cargarMapa: cargarMapaPrivada,
-    irAMiPosicion: irAMiPosicionPrivada
+    irAMiPosicion: irAMiPosicionPrivada,
+    cargarPuntosGuardados: cargarPuntosGuardados
   }
 })();

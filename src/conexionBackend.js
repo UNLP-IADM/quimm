@@ -1,10 +1,5 @@
 ConexionBackend = (function() {
 
-  // Cargar dependencias a usar: Asteroid
-  loadScript("vendor/ddp.js/src/ddp.js");
-  loadScript("vendor/q/q.js");
-  loadScript("vendor/asteroid/dist/asteroid.browser.js");
-
   var _conn = null;
 
   var _iniciar = function( opciones ) {
@@ -14,7 +9,8 @@ ConexionBackend = (function() {
     opciones.url = opciones.url || 'localhost';
     opciones.puerto = opciones.puerto || '5000';
     opciones.suscripciones = opciones.suscripciones ||
-      ['todosLosSucesos']
+      [ [ 'todosLosSucesos' ] ]
+    opciones.onConnection = opciones.onConnection || function(){};
 
     var addr = opciones.url + ':' + opciones.puerto;
 
@@ -23,8 +19,10 @@ ConexionBackend = (function() {
 
     _conn.on('connected', function() {
       // Realizar suscripciones
-      for (var i=0; i<opciones.suscripciones.length; i++)
-        _conn.subscribe(opciones.suscripciones[i]);
+      for (var i=0; i<opciones.suscripciones.length; i++) {
+        _conn.subscribe.apply(_conn, opciones.suscripciones[i]);
+        opciones.onConnection();
+      }
     });
 
   };
@@ -60,10 +58,11 @@ ConexionBackend = (function() {
     },
     guardarSuceso: function(objeto) {
       return _insertar('sucesos', {
-        title: objeto.title,
-        description: objeto.category,
-        lat: objeto.lat,
-        lng: objeto.lng
+        nombre: objeto.title,
+        descripcion: objeto.description,
+        categoria: objeto.category,
+        ubicacion: { type: 'Point', coordinates: [ objeto.lng, objeto.lat ] },
+        confirmacion: objeto.confirmation
       });
     }
   }
