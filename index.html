@@ -24,8 +24,8 @@
 			<option value="neutralIcon">Neutral</option>
 			<option value="badIcon">Malo</option>
 		  </select>
-          <button class="button-snap" onClick="guardarMarcador();">Guardar</button>
-		  <button class="button-snap" onClick="closeSnap();">Cerrar</button>
+				<button class="button-snap" onClick="guardarMarcador();">Guardar</button>
+				<button class="button-snap" onClick="closeSnap();">Cerrar</button>
       </div>
 
      <div class="snap-drawer snap-drawer-right">
@@ -38,15 +38,24 @@
 		    <label class="etiquetas-marcador">Categoría:</label><br/>
 			<div id="contenedor"><label class="datos-marcador" type="text" id="d-categoria-marcador"></label></div><br/><br/>
 		  </div>
-          <button class="button-snap" onClick="closeSnap();">Cerrar</button>
+      <button class="button-snap" onClick="closeSnap();">Cerrar</button>
 		  <button class="button-snap" onClick="">Confirmar Evento (NO hace nada)</button>
       </div>
   </div>
 
   <div id="content" class="snap-content">
-      <div id="map"></div>
+      <div id="map">
+				<svg  id="barra" width="400" height="180">
+					<!--<rect id="rectangulo" x="50" y="20" rx="10" ry="0" width="150"  height="20"/>-->
+					<rect x="50" y="20" rx="10" ry="10" width="150"  height="20" style="fill:green"/> 
+					<text x="60" y="35">50%</text>
+					<rect x="50" y="50" rx="10" ry="10" width="150"  height="20" style="fill:orange"/>
+					<text x="60" y="65">50%</text>
+					<rect x="50" y="80" rx="10" ry="10" width="150"  height="20" style="fill:red"/> 
+					<text x="60" y="95">50%</text>
+				</svg>
+			</div>
 			<input id="home" type="image" src="imagenes/home.png" alt="home" onClick="modelo.irAMiPosicion();"/>
-			<!--<button id="home" type="button" " >Home</button>   width="48" height="48"-->
   </div>
 
   <div id="scripts">
