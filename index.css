@@ -52,3 +52,18 @@ html, body, #map {
 #contenedor{
 	background:#B5DAFF;	
 }
+#barra{
+	z-index: 1; 
+	position: relative;
+	width: 400px; 
+	height: 180px;
+}
+#rectangulo{
+	z-index: 1; 
+	position: relative;
+	fill: red;
+	stroke: black;
+	stroke-width: 3;
+	opacity: 0.8;
+	fill-rule: nonzero;
+}
