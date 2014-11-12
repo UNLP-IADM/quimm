@@ -1,5 +1,5 @@
 var modelo = (function () {
-  var map, markers, ultimoMark,
+  var map, markers, marcadorActual,
 
   //me guardo la latitud y longitud de cuando hago doble click
   //para crear el objeto Marcador despues
@@ -7,6 +7,8 @@ var modelo = (function () {
 
   //para el manejo de los marcadores
   iconos, goodIcon, neutraIcon, badIcon;
+  
+  //para el manejo de 
 
   map = L.map('map', {
     doubleClickZoom: false
@@ -70,7 +72,9 @@ var modelo = (function () {
   mostrarSuceso = function (e){
     snapper.open('right');
     marker = markers[e.latlng];
-
+	//lo necesito para los metodos de confirmar o desmentir
+	marcadorActual = marker;
+	
     document.getElementById("d-titulo-marcador").innerHTML = marker.title;
     document.getElementById("d-descripcion-marcador").innerHTML = marker.description;
     if(marker.category == "goodIcon"){
@@ -94,7 +98,6 @@ var modelo = (function () {
     var radius = e.accuracy / 2;
     L.marker(e.latlng).addTo(map).bindPopup("Estás a aprox. " + radius + " metros de este punto.").openPopup();
     L.circle(e.latlng, radius).addTo(map);
-
   }
 
   // Asociaciones de eventos con funciones del modelo:
@@ -104,15 +107,8 @@ var modelo = (function () {
   guardarMarcador = function () {
     var categoria = document.getElementById("select-marcador").value;
     //lo hacemos así porque icon: pide el nombre de la variable
-    if(categoria == "goodIcon"){
-      var markerLeaflet = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: goodIcon}).addTo(map);
-    }else{
-      if(categoria == "neutralIcon"){
-        var markerLeaflet = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: neutralIcon}).addTo(map);
-      }else{
-        var markerLeaflet = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: badIcon}).addTo(map);
-      }
-    }
+    var markerLeaflet = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: neutralIcon}).addTo(map);
+	
     markerLeaflet.on('click', onclickMarker);
 
     var marker = new MarkerObject(
@@ -122,9 +118,12 @@ var modelo = (function () {
         tempLatLng.lat,
         tempLatLng.lng,
         markerLeaflet);
-
+	
     markers[tempLatLng] = marker;
-
+	//actualizamos la barra de estado general de los eventos de acuerdo a si
+	//es bueno, neutral o malo.	
+	updateBarraDeEstado(marker.category);
+	
     var d = ConexionBackend.guardarSuceso(marker);
     console.log(d);
 
@@ -132,14 +131,58 @@ var modelo = (function () {
     snapper.close();
   }
 
+  updateBarraDeEstado = function(){
+	var good = 0;
+	var bad = 0;
+	var neutral = 0;	
+	for(m in markers) {
+		var elem = markers[m];
+		if(elem.category == "goodIcon"){good++;}
+		else{
+			if(elem.category == "badIcon"){bad++;}
+			else{neutral++;}
+		}
+	}
+	var barra = document.getElementById("barraDeEstado");
+	if(good>bad & good>neutral){//pintamos la barra de verde		
+		barra.style.background  = "green";		
+	}
+	else{
+		if(bad>good & bad>neutral){//pintamos la barra de rojo		
+			barra.style.background  = "red";			
+		}
+		else{			
+			//pintamos la barra de amarillo		
+			barra.style.background  = "yellow";			
+		}
+	}
+	console.log("bueno "+good+" malo "+bad+" neutral "+neutral);
+  }
+  
   irAMiPosicionPrivada = function(){
     console.log(miLat);
     map.setView(new L.LatLng(miLng, miLat), 16);
   }
+  
+  confirmarEvento = function(){
+	marcadorActual.confirmacion += 1;
+	console.log("confirmacion: "+marcadorActual.confirmacion);
+	if(marcadorActual.confirmacion >= 1){
+		marcadorActual.markerLeaflet.setIcon(goodIcon);
+	}
+  }
+  
+  desmentirEvento = function(){
+	marcadorActual.confirmacion -= 1;
+	console.log("confirmacion: "+marcadorActual.confirmacion);
+	if(marcadorActual.confirmacion <= 0){
+		marcadorActual.markerLeaflet.setIcon(badIcon);
+	}
+  }
 
   return{
     cargarMapa: cargarMapaPrivada,
-    irAMiPosicion: irAMiPosicionPrivada,
+    irAMiPosicion: irAMiPosicionPrivada,	
     cargarPuntosGuardados: cargarPuntosGuardados
   }
 })();

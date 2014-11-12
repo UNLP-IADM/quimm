@@ -58,12 +58,16 @@ html, body, #map {
 	width: 400px; 
 	height: 180px;
 }
-#rectangulo{
-	z-index: 1; 
-	position: relative;
-	fill: red;
-	stroke: black;
-	stroke-width: 3;
-	opacity: 0.8;
-	fill-rule: nonzero;
+#barraDeEstado{
+	background-color: #f0dd0c;
+	border-radius: 25px 25px 25px 25px;
+	-moz-border-radius: 25px 25px 25px 25px;
+	-webkit-border-radius: 25px 25px 25px 25px;
+	border: 0px solid #000000;
+	width: 150px; 
+	height: 20px;	
+	margin-top: 10px;
+	margin-left: 50px;
+	z-index: 200;
+	position: absolute;	
 }
