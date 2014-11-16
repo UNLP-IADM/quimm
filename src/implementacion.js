@@ -6,16 +6,25 @@ var modelo = (function () {
   miLat, miLng, tempLatLng,
 
   //para el manejo de los marcadores
-  iconos, goodIcon, neutraIcon, badIcon;
-  
-  //para el manejo de 
+  iconos, goodIcon, neutraIcon, badIcon,
+
+  //distancia (en metros) considerados como "localidad"
+  LOCALLITY = 5000;
 
   map = L.map('map', {
     doubleClickZoom: false
   });
 
-  markers = new Array();
-  iconos = L.Icon.extend({
+  guardarMarcador = function(marker, Llatlng) {
+    markers[Llatlng.toString()] = marker;
+  }
+
+  cargarMarcador = function(Llatlng) {
+    return markers[Llatlng.toString()];
+  }
+
+  markers = new Object();
+  Icono = L.Icon.extend({
     options: {
       iconSize:     [43, 50], // size of the icon
       shadowSize:   [50, 64], // size of the shadow
@@ -24,15 +33,29 @@ var modelo = (function () {
       popupAnchor:  [-2, -13] // point from which the popup should open relative to the iconAnchor
     }
   });
-  goodIcon = new iconos({iconUrl: 'imagenes/flag-export.png'});
-  neutralIcon = new iconos({iconUrl: 'imagenes/smiley_neutral.png'});
-  badIcon = new iconos({iconUrl: 'imagenes/caution.png'});
+  goodIcon = new Icono({iconUrl: 'imagenes/flag-export.png'});
+  neutralIcon = new Icono({iconUrl: 'imagenes/smiley_neutral.png'});
+  badIcon = new Icono({iconUrl: 'imagenes/caution.png'});
 
   cargarPuntosGuardados = function() {
+    var icons = {
+      'goodIcon': goodIcon,
+      'neutralIcon': neutralIcon,
+      'badIcon': badIcon
+    }
     var puntos = ConexionBackend.sucesos();
     for (var i=0; i < puntos.length; i++) {
       var pos = puntos[i].ubicacion.coordinates;
-      markers.push(L.marker([pos[1], pos[0]], {icon: puntos[i].categoria}))
+      var lMark = L.marker([pos[1], pos[0]], { icon: icons[puntos[i].categoria] }).addTo(map);
+      lMark.on('click', mostrarSuceso);
+      var marker = new MarkerObject(
+        puntos[i].nombre,
+        puntos[i].descripcion,
+        puntos[i].categoria,
+        pos[1],
+        pos[0],
+        lMark);
+      guardarMarcador(marker, lMark._latlng);
     }
   }
 
@@ -51,9 +74,14 @@ var modelo = (function () {
     // Inicia la conexión con el backend junto a una
     // suscripción a sucesos locales (cuando el geolocalizador esté listo)
     Geolocation.onCurrentPosition( function( currentPosition ) {
-      //ConexionBackend.iniciar( { suscripciones: [ [ 'sucesosSegunUbicacion', currentPosition, 10000 ] ] } );
-      ConexionBackend.iniciar( { suscripciones: [ [ 'todosLosSucesos' ] ], onConnection: cargarPuntosGuardados } );
+      ConexionBackend.iniciar( { suscripciones: [ [ 'sucesosSegunUbicacion', currentPosition, LOCALLITY ] ], onConnection: cargarPuntosGuardados } );
+      console.log('Conexión con el backend establecida');
     });
+
+    //FIXME: Este linea que intencionalmente retrasa la
+    //la carga de los sucesos no esta buena. Habría que
+    //encontrar la forma de cargarlos sin usar timeouts.
+    setTimeout(cargarPuntosGuardados, 250);
   }
 
   // en este método se debería cargar/abrir una pantalla
@@ -71,10 +99,10 @@ var modelo = (function () {
   // formatea el texto a mostrar en el snapper de la derecha
   mostrarSuceso = function (e){
     snapper.open('right');
-    marker = markers[e.latlng];
+    marker = cargarMarcador(e.latlng);
 	//lo necesito para los metodos de confirmar o desmentir
 	marcadorActual = marker;
-	
+
     document.getElementById("d-titulo-marcador").innerHTML = marker.title;
     document.getElementById("d-descripcion-marcador").innerHTML = marker.description;
     if(marker.category == "goodIcon"){
@@ -97,18 +125,18 @@ var modelo = (function () {
     console.log(e.latlng.lat);
     var radius = e.accuracy / 2;
     L.marker(e.latlng).addTo(map).bindPopup("Estás a aprox. " + radius + " metros de este punto.").openPopup();
-    L.circle(e.latlng, radius).addTo(map);
+    L.circle(e.latlng, LOCALLITY).addTo(map);
   }
 
   // Asociaciones de eventos con funciones del modelo:
   onMapDoubleClick = crearSuceso;
   onclickMarker = mostrarSuceso;
 
-  guardarMarcador = function () {
+  guardarSuceso = function () {
     var categoria = document.getElementById("select-marcador").value;
     //lo hacemos así porque icon: pide el nombre de la variable
     var markerLeaflet = L.marker([tempLatLng.lat,tempLatLng.lng], {icon: neutralIcon}).addTo(map);
-	
+
     markerLeaflet.on('click', onclickMarker);
 
     var marker = new MarkerObject(
@@ -118,12 +146,12 @@ var modelo = (function () {
         tempLatLng.lat,
         tempLatLng.lng,
         markerLeaflet);
-	
-    markers[tempLatLng] = marker;
+
+    guardarMarcador(marker, tempLatLng);
 	//actualizamos la barra de estado general de los eventos de acuerdo a si
-	//es bueno, neutral o malo.	
+	//es bueno, neutral o malo.
 	updateBarraDeEstado(marker.category);
-	
+
     var d = ConexionBackend.guardarSuceso(marker);
     console.log(d);
 
@@ -134,7 +162,7 @@ var modelo = (function () {
   updateBarraDeEstado = function(){
 	var good = 0;
 	var bad = 0;
-	var neutral = 0;	
+	var neutral = 0;
 	for(m in markers) {
 		var elem = markers[m];
 		if(elem.category == "goodIcon"){good++;}
@@ -144,26 +172,26 @@ var modelo = (function () {
 		}
 	}
 	var barra = document.getElementById("barraDeEstado");
-	if(good>bad & good>neutral){//pintamos la barra de verde		
-		barra.style.background  = "green";		
+	if(good>bad & good>neutral){//pintamos la barra de verde
+		barra.style.background  = "green";
 	}
 	else{
-		if(bad>good & bad>neutral){//pintamos la barra de rojo		
-			barra.style.background  = "red";			
+		if(bad>good & bad>neutral){//pintamos la barra de rojo
+			barra.style.background  = "red";
 		}
-		else{			
-			//pintamos la barra de amarillo		
-			barra.style.background  = "yellow";			
+		else{
+			//pintamos la barra de amarillo
+			barra.style.background  = "yellow";
 		}
 	}
 	console.log("bueno "+good+" malo "+bad+" neutral "+neutral);
   }
-  
+
   irAMiPosicionPrivada = function(){
     console.log(miLat);
     map.setView(new L.LatLng(miLng, miLat), 16);
   }
-  
+
   confirmarEvento = function(){
 	marcadorActual.confirmacion += 1;
 	console.log("confirmacion: "+marcadorActual.confirmacion);
@@ -171,7 +199,7 @@ var modelo = (function () {
 		marcadorActual.markerLeaflet.setIcon(goodIcon);
 	}
   }
-  
+
   desmentirEvento = function(){
 	marcadorActual.confirmacion -= 1;
 	console.log("confirmacion: "+marcadorActual.confirmacion);
@@ -182,7 +210,7 @@ var modelo = (function () {
 
   return{
     cargarMapa: cargarMapaPrivada,
-    irAMiPosicion: irAMiPosicionPrivada,	
+    irAMiPosicion: irAMiPosicionPrivada,
     cargarPuntosGuardados: cargarPuntosGuardados
   }
 })();

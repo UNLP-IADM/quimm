@@ -21,8 +21,8 @@ ConexionBackend = (function() {
       // Realizar suscripciones
       for (var i=0; i<opciones.suscripciones.length; i++) {
         _conn.subscribe.apply(_conn, opciones.suscripciones[i]);
-        opciones.onConnection();
       }
+      opciones.onConnection();
     });
 
   };
