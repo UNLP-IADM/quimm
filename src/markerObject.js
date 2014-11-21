@@ -5,6 +5,6 @@ function MarkerObject(title, description, category, lat, lng, mark) {
   this.lat = lat,
   this.lng = lng,
   this.markerLeaflet = mark,
-  this.confirmacion = 0
+  this.confirmation = 0
 }
 

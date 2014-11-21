@@ -39,14 +39,21 @@ var modelo = (function () {
 
   cargarPuntosGuardados = function() {
     var icons = {
-      'goodIcon': goodIcon,
-      'neutralIcon': neutralIcon,
-      'badIcon': badIcon
+      0: goodIcon,
+      1: neutralIcon,
+      2: badIcon
     }
     var puntos = ConexionBackend.sucesos();
     for (var i=0; i < puntos.length; i++) {
+      var ic;
+      console.log("Confirmacion: "+puntos[i].confirmacion);
+      if(puntos[i].confirmacion > 0)
+      { ic=0; }else{
+          if(puntos[i].confirmacion == 0){ ic = 1; }
+          else{ ic = 2; }
+      }
       var pos = puntos[i].ubicacion.coordinates;
-      var lMark = L.marker([pos[1], pos[0]], { icon: icons[puntos[i].categoria] }).addTo(map);
+      var lMark = L.marker([pos[1], pos[0]], { icon: icons[ic] }).addTo(map);
       lMark.on('click', mostrarSuceso);
       var marker = new MarkerObject(
         puntos[i].nombre,
@@ -57,6 +64,7 @@ var modelo = (function () {
         lMark);
       guardarMarcador(marker, lMark._latlng);
     }
+    updateBarraDeEstado();
   }
 
   cargarMapaPrivada = function () {
@@ -81,7 +89,7 @@ var modelo = (function () {
     //FIXME: Este linea que intencionalmente retrasa la
     //la carga de los sucesos no esta buena. Habría que
     //encontrar la forma de cargarlos sin usar timeouts.
-    setTimeout(cargarPuntosGuardados, 500);
+    setTimeout(cargarPuntosGuardados, 1000);
   }
 
   // en este método se debería cargar/abrir una pantalla
@@ -193,19 +201,19 @@ var modelo = (function () {
   }
 
   confirmarEvento = function(){
-	marcadorActual.confirmacion += 1;
-	console.log("confirmacion: "+marcadorActual.confirmacion);
-	if(marcadorActual.confirmacion >= 1){
+	marcadorActual.confirmation += 1;
+	console.log("confirmacion: "+marcadorActual.confirmation);
+	if(marcadorActual.confirmation >= 1){
 		marcadorActual.markerLeaflet.setIcon(goodIcon);
-	}
+	}    
   }
 
   desmentirEvento = function(){
-	marcadorActual.confirmacion -= 1;
-	console.log("confirmacion: "+marcadorActual.confirmacion);
-	if(marcadorActual.confirmacion <= 0){
+	marcadorActual.confirmation -= 1;
+	console.log("confirmacion: "+marcadorActual.confirmation);
+	if(marcadorActual.confirmation <= 0){
 		marcadorActual.markerLeaflet.setIcon(badIcon);
-	}
+	}      
   }
 
   return{
