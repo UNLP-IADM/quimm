@@ -81,7 +81,7 @@ var modelo = (function () {
     //FIXME: Este linea que intencionalmente retrasa la
     //la carga de los sucesos no esta buena. Habría que
     //encontrar la forma de cargarlos sin usar timeouts.
-    setTimeout(cargarPuntosGuardados, 250);
+    setTimeout(cargarPuntosGuardados, 500);
   }
 
   // en este método se debería cargar/abrir una pantalla

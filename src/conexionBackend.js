@@ -56,6 +56,12 @@ ConexionBackend = (function() {
     sucesos: function() {
       return _consultaReactiva('sucesos', {}).result;
     },
+    cambiosEnSucesos: function(callback) {
+      return _consultaReactiva('sucesos', {}).on('change', function(s_id) {
+        var suceso = _consultaReactiva('sucesos', { _id: s_id }).result[0];
+        return callback(suceso);
+      });
+    },
     guardarSuceso: function(objeto) {
       return _insertar('sucesos', {
         nombre: objeto.title,
