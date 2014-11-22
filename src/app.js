@@ -2,14 +2,12 @@
  * Quimm App main file
  */
 
-var snapper = new Snap({
-  element: document.getElementById('content'),
-  hyperextensible: false
-});
+(function( Backend, Act ){
+  // TODO: acomodar las cosas - La idea es tomar a este modulo como un starter para los demas.
+  Act.cargarMapa();
 
-function closeSnap() {
-  snapper.close();
-}
+  Backend.iniciar();
 
-// Final
-console.log('App iniciada');
+  console.log('-- Quimm App: iniciada. --');
+
+}( ConexionBackend, Actividad )); // Declaramos a nuestros otros modulos como dependencias.

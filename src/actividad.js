@@ -1,5 +1,5 @@
-var modelo = (function () {
-  var map, markers, marcadorActual,
+var Actividad = (function ( Sn, Geo, Marker ) {
+  var map, markers, marcadorActual, snapper,
 
   //me guardo la latitud y longitud de cuando hago doble click
   //para crear el objeto Marcador despues
@@ -55,7 +55,7 @@ var modelo = (function () {
       var pos = puntos[i].ubicacion.coordinates;
       var lMark = L.marker([pos[1], pos[0]], { icon: icons[ic] }).addTo(map);
       lMark.on('click', mostrarSuceso);
-      var marker = new MarkerObject(
+      var marker = new Marker(
         puntos[i].nombre,
         puntos[i].descripcion,
         puntos[i].categoria,
@@ -67,7 +67,37 @@ var modelo = (function () {
     updateBarraDeEstado();
   }
 
+  cerrarSuceso = function(){
+    snapper.close();
+  }
+
+  initialize = function(){
+    snapper = new Sn({
+      element: document.getElementById('content'),
+      hyperextensible: false
+    });
+  }
+
+  addEvents = function(){
+    var saves = document.querySelectorAll( '.saveAction' );
+    var closes = document.querySelectorAll( '.closeAction' );
+
+    for ( var i=0; i<saves.length; i++ ){
+      var saveButton = saves[ i ];
+      saveButton.addEventListener( 'click', this.guardarSuceso, false );
+    }
+
+    for ( var j=0; j<closes.length; j++ ){
+      var closeButton = closes[ i ];
+      closeButton.addEventListener( 'click', this.cerrarSnap, false );
+    }
+
+  }
+
   cargarMapaPrivada = function () {
+
+    initialize();
+
     //centra el mapa donde estas ubicado
     map.locate({setView: true, maxZoom: 16});
     L.tileLayer('http://{s}.tiles.mapbox.com/v3/federicoruf.jl3l85oh/{z}/{x}/{y}.png', {
@@ -81,7 +111,7 @@ var modelo = (function () {
     //-----------------
     // Inicia la conexión con el backend junto a una
     // suscripción a sucesos locales (cuando el geolocalizador esté listo)
-    Geolocation.onCurrentPosition( function( currentPosition ) {
+    Geo.onCurrentPosition( function( currentPosition ) {
       ConexionBackend.iniciar( { suscripciones: [ [ 'sucesosSegunUbicacion', currentPosition, LOCALLITY ] ], onConnection: cargarPuntosGuardados } );
       console.log('Conexión con el backend establecida');
     });
@@ -89,7 +119,9 @@ var modelo = (function () {
     //FIXME: Este linea que intencionalmente retrasa la
     //la carga de los sucesos no esta buena. Habría que
     //encontrar la forma de cargarlos sin usar timeouts.
-    setTimeout(cargarPuntosGuardados, 1000);
+    //setTimeout(cargarPuntosGuardados, 1000);
+    map.on('load', cargarPuntosGuardados);
+
   }
 
   // en este método se debería cargar/abrir una pantalla
@@ -113,10 +145,10 @@ var modelo = (function () {
 
     document.getElementById("d-titulo-marcador").innerHTML = marker.title;
     document.getElementById("d-descripcion-marcador").innerHTML = marker.description;
-    if(marker.category == "goodIcon"){
+    if ( marker.category == "goodIcon" ){
       document.getElementById("d-categoria-marcador").innerHTML = "Evento bueno";
     }else{
-      if(marker.category == "badIcon"){
+      if( marker.category == "badIcon" ){
         document.getElementById("d-categoria-marcador").innerHTML = "Evento malo";
       }else{
         document.getElementById("d-categoria-marcador").innerHTML = "Evento neutral";
@@ -147,7 +179,7 @@ var modelo = (function () {
 
     markerLeaflet.on('click', onclickMarker);
 
-    var marker = new MarkerObject(
+    var marker = new Marker(
         document.getElementById("titulo-marcador").value,
         document.getElementById("descripcion-marcador").value,
         document.getElementById("select-marcador").value,
@@ -168,31 +200,31 @@ var modelo = (function () {
   }
 
   updateBarraDeEstado = function(){
-	var good = 0;
-	var bad = 0;
-	var neutral = 0;
-	for(m in markers) {
-		var elem = markers[m];
-		if(elem.category == "goodIcon"){good++;}
-		else{
-			if(elem.category == "badIcon"){bad++;}
-			else{neutral++;}
-		}
-	}
-	var barra = document.getElementById("barraDeEstado");
-	if(good>bad & good>neutral){//pintamos la barra de verde
-		barra.style.background  = "green";
-	}
-	else{
-		if(bad>good & bad>neutral){//pintamos la barra de rojo
-			barra.style.background  = "red";
-		}
-		else{
-			//pintamos la barra de amarillo
-			barra.style.background  = "yellow";
-		}
-	}
-	console.log("bueno "+good+" malo "+bad+" neutral "+neutral);
+  	var good = 0;
+  	var bad = 0;
+  	var neutral = 0;
+  	for(m in markers) {
+  		var elem = markers[m];
+  		if(elem.category == "goodIcon"){good++;}
+  		else{
+  			if(elem.category == "badIcon"){bad++;}
+  			else{neutral++;}
+  		}
+  	}
+  	var barra = document.getElementById("barraDeEstado");
+  	if(good>bad & good>neutral){//pintamos la barra de verde
+  		barra.style.background  = "green";
+  	}
+  	else{
+  		if(bad>good & bad>neutral){//pintamos la barra de rojo
+  			barra.style.background  = "red";
+  		}
+  		else{
+  			//pintamos la barra de amarillo
+  			barra.style.background  = "yellow";
+  		}
+  	}
+  	console.log("bueno "+good+" malo "+bad+" neutral "+neutral);
   }
 
   irAMiPosicionPrivada = function(){
@@ -201,19 +233,19 @@ var modelo = (function () {
   }
 
   confirmarEvento = function(){
-	marcadorActual.confirmation += 1;
-	console.log("confirmacion: "+marcadorActual.confirmation);
-	if(marcadorActual.confirmation >= 1){
-		marcadorActual.markerLeaflet.setIcon(goodIcon);
-	}    
+  	marcadorActual.confirmation += 1;
+  	console.log("confirmacion: "+marcadorActual.confirmation);
+  	if(marcadorActual.confirmation >= 1){
+  		marcadorActual.markerLeaflet.setIcon(goodIcon);
+  	}
   }
 
   desmentirEvento = function(){
-	marcadorActual.confirmation -= 1;
-	console.log("confirmacion: "+marcadorActual.confirmation);
-	if(marcadorActual.confirmation <= 0){
-		marcadorActual.markerLeaflet.setIcon(badIcon);
-	}      
+    marcadorActual.confirmation -= 1;
+    console.log("confirmacion: "+marcadorActual.confirmation);
+    if(marcadorActual.confirmation <= 0){
+    	marcadorActual.markerLeaflet.setIcon(badIcon);
+    }
   }
 
   return{
@@ -221,4 +253,4 @@ var modelo = (function () {
     irAMiPosicion: irAMiPosicionPrivada,
     cargarPuntosGuardados: cargarPuntosGuardados
   }
-})();
+})( Snap, Geolocation, MarkerObject );

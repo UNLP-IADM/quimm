@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="vendor/snapjs/snap.css" />
     <link rel="stylesheet" type="text/css" href="index.css">
   </head>
-  <body onload="modelo.cargarMapa()">
+  <body>
 
   <div class="snap-drawers">
 	  <div class="snap-drawer snap-drawer-left">
@@ -24,8 +24,8 @@
 			<option value="neutralIcon">Neutral</option>
 			<option value="badIcon">Malo</option>
 		  </select>
-				<button class="button-snap" onClick="guardarSuceso();">Guardar</button>
-				<button class="button-snap" onClick="closeSnap();">Cerrar</button>
+				<button class="button-snap saveAction" onClick="guardarSuceso();">Guardar</button>
+				<button class="button-snap closeAction" onClick="cerrarSuceso();">Cerrar</button>
       </div>
 
      <div class="snap-drawer snap-drawer-right">
@@ -41,7 +41,7 @@
 		  <button class="button-snap" onClick="confirmarEvento();">Confirmar Evento</button>
 		  <button class="button-snap" onClick="desmentirEvento();">Desmentir Evento</button>
 
-		  <button class="button-snap" onClick="closeSnap();">Cerrar</button>
+		  <button class="button-snap closeAction" onClick="cerrarSuceso();">Cerrar</button>
       </div>
   </div>
 
@@ -54,12 +54,14 @@
   </div>
 
   <div id="scripts">
-    <script type="text/javascript" src="src/geolocation.js"></script>
+    <!-- Vendors 3rd party -->
+    <script type="text/javascript" src="vendor/leaflet/dist/leaflet.js"></script>
     <script src="vendor/ddp.js/src/ddp.js"></script>
     <script src="vendor/q/q.js"></script>
     <script src="vendor/asteroid/dist/asteroid.browser.js"></script>
     <script src="vendor/snapjs/snap.js"></script>
-    <script type="text/javascript" src="vendor/leaflet/dist/leaflet.js"></script>
+    <!-- Our Code -->
+    <script type="text/javascript" src="src/geolocation.js"></script>
     <script type="text/javascript" src="src/conexionBackend.js"></script>
     <script type="text/javascript" src="src/markerObject.js"></script>
     <script type="text/javascript" src="src/implementacion.js"></script>

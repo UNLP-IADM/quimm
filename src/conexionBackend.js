@@ -1,4 +1,4 @@
-ConexionBackend = (function() {
+var ConexionBackend = (function( Ar ) {
 
   var _conn = null;
 
@@ -15,7 +15,7 @@ ConexionBackend = (function() {
     var addr = opciones.url + ':' + opciones.puerto;
 
     // Iniciar conexión con el backend
-    _conn = new Asteroid(addr);
+    _conn = new Ar( addr );
 
     _conn.on('connected', function() {
       // Realizar suscripciones
@@ -73,4 +73,4 @@ ConexionBackend = (function() {
     }
   }
 
-})()
+})( Asteroid )
