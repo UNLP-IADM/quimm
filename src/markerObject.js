@@ -1,10 +1,11 @@
-function MarkerObject(title, description, category, lat, lng, mark) {
+function MarkerObject(id, title, description, category, confirmation, lat, lng, mark) {
+  this.id = id,
   this.title = title,
   this.description = description,
   this.category = category,
+  this.confirmation = confirmation,
   this.lat = lat,
   this.lng = lng,
-  this.markerLeaflet = mark,
-  this.confirmation = 0
+  this.markerLeaflet = mark;
 }
 

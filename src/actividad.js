@@ -56,9 +56,11 @@ var Actividad = (function ( Sn, Geo, Marker ) {
       var lMark = L.marker([pos[1], pos[0]], { icon: icons[ic] }).addTo(map);
       lMark.on('click', mostrarSuceso);
       var marker = new Marker(
+        puntos[i]._id,
         puntos[i].nombre,
         puntos[i].descripcion,
         puntos[i].categoria,
+        puntos[i].confirmacion,
         pos[1],
         pos[0],
         lMark);
@@ -180,17 +182,19 @@ var Actividad = (function ( Sn, Geo, Marker ) {
     markerLeaflet.on('click', onclickMarker);
 
     var marker = new Marker(
-        document.getElementById("titulo-marcador").value,
-        document.getElementById("descripcion-marcador").value,
-        document.getElementById("select-marcador").value,
-        tempLatLng.lat,
-        tempLatLng.lng,
-        markerLeaflet);
+      null,
+      document.getElementById("titulo-marcador").value,
+      document.getElementById("descripcion-marcador").value,
+      document.getElementById("select-marcador").value,
+      0,
+      tempLatLng.lat,
+      tempLatLng.lng,
+      markerLeaflet);
 
     guardarMarcador(marker, tempLatLng);
-	//actualizamos la barra de estado general de los eventos de acuerdo a si
-	//es bueno, neutral o malo.
-	updateBarraDeEstado(marker.category);
+    //actualizamos la barra de estado general de los eventos de acuerdo a si
+    //es bueno, neutral o malo.
+    updateBarraDeEstado(marker.category);
 
     var d = ConexionBackend.guardarSuceso(marker);
     console.log(d);
@@ -200,31 +204,31 @@ var Actividad = (function ( Sn, Geo, Marker ) {
   }
 
   updateBarraDeEstado = function(){
-  	var good = 0;
-  	var bad = 0;
-  	var neutral = 0;
-  	for(m in markers) {
-  		var elem = markers[m];
-  		if(elem.category == "goodIcon"){good++;}
-  		else{
-  			if(elem.category == "badIcon"){bad++;}
-  			else{neutral++;}
-  		}
-  	}
-  	var barra = document.getElementById("barraDeEstado");
-  	if(good>bad & good>neutral){//pintamos la barra de verde
-  		barra.style.background  = "green";
-  	}
-  	else{
-  		if(bad>good & bad>neutral){//pintamos la barra de rojo
-  			barra.style.background  = "red";
-  		}
-  		else{
-  			//pintamos la barra de amarillo
-  			barra.style.background  = "yellow";
-  		}
-  	}
-  	console.log("bueno "+good+" malo "+bad+" neutral "+neutral);
+    var good = 0;
+    var bad = 0;
+    var neutral = 0;
+    for(m in markers) {
+      var elem = markers[m];
+      if(elem.category == "goodIcon"){good++;}
+      else{
+        if(elem.category == "badIcon"){bad++;}
+        else{neutral++;}
+      }
+    }
+    var barra = document.getElementById("barraDeEstado");
+    if(good>bad & good>neutral){//pintamos la barra de verde
+      barra.style.background  = "green";
+    }
+    else{
+      if(bad>good & bad>neutral){//pintamos la barra de rojo
+        barra.style.background  = "red";
+      }
+      else{
+        //pintamos la barra de amarillo
+        barra.style.background  = "yellow";
+      }
+    }
+    console.log("bueno "+good+" malo "+bad+" neutral "+neutral);
   }
 
   irAMiPosicionPrivada = function(){
@@ -233,15 +237,18 @@ var Actividad = (function ( Sn, Geo, Marker ) {
   }
 
   confirmarEvento = function(){
-  	marcadorActual.confirmation += 1;
-  	console.log("confirmacion: "+marcadorActual.confirmation);
-  	if(marcadorActual.confirmation >= 1){
-  		marcadorActual.markerLeaflet.setIcon(goodIcon);
-  	}
+    console.log(marcadorActual);
+    marcadorActual.confirmation += 1;
+    ConexionBackend.confirmarSuceso(marcadorActual);
+    console.log("confirmacion: "+marcadorActual.confirmation);
+    if(marcadorActual.confirmation >= 1){
+      marcadorActual.markerLeaflet.setIcon(goodIcon);
+    }
   }
 
   desmentirEvento = function(){
     marcadorActual.confirmation -= 1;
+    ConexionBackend.desmentirSuceso(marcadorActual);
     console.log("confirmacion: "+marcadorActual.confirmation);
     if(marcadorActual.confirmation <= 0){
     	marcadorActual.markerLeaflet.setIcon(badIcon);

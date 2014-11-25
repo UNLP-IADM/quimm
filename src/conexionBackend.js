@@ -47,6 +47,15 @@ var ConexionBackend = (function( Ar ) {
     return coleccion.insert(objeto);
   }
 
+  var _actualizar = function(nomColeccion, id, query) {
+    if ( !_conn) {
+      throw 'No hay conexión con el backend';
+    }
+
+    var coleccion = _conn.getCollection(nomColeccion);
+    return coleccion.update(id, query);
+  }
+
   return {
     estado: function() {
       return _conn ? 'activa' : 'desactiva'
@@ -70,6 +79,18 @@ var ConexionBackend = (function( Ar ) {
         ubicacion: { type: 'Point', coordinates: [ objeto.lng, objeto.lat ] },
         confirmacion: objeto.confirmation
       });
+    },
+    /* AVISO: Estas funciones asumen el hecho de que
+     * las confirmaciones ya fueron actualizadas localmente.
+     * Se intento usar un $inc y un $dec en ambas, pero no se
+     * pudo porque Asteroid es muy limitado para hacer consultas:
+     * Ver: https://github.com/mondora/asteroid/issues/31
+     */
+    confirmarSuceso: function(objeto) {
+      return _actualizar('sucesos', objeto.id, { confirmacion: objeto.confirmation });
+    },
+    desmentirSuceso: function(objeto) {
+      return _actualizar('sucesos', objeto.id, { confirmacion: objeto.confirmation });
     }
   }
 
