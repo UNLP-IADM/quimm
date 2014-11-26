@@ -6,8 +6,8 @@ var ConexionBackend = (function( Ar ) {
 
     // Verificar parámetros
     opciones = opciones || {};
-    opciones.url = opciones.url || 'localhost';
-    opciones.puerto = opciones.puerto || '5000';
+    opciones.url = 'quimm-backend-1-166446.sae1.nitrousbox.com';
+    opciones.puerto = opciones.puerto || '3000';
     opciones.suscripciones = opciones.suscripciones ||
       [ [ 'todosLosSucesos' ] ]
     opciones.onConnection = opciones.onConnection || function(){};
@@ -15,7 +15,7 @@ var ConexionBackend = (function( Ar ) {
     var addr = opciones.url + ':' + opciones.puerto;
 
     // Iniciar conexión con el backend
-    _conn = new Ar( addr );
+    _conn = new Ar( "quimm-backend.meteor.com" );
 
     _conn.on('connected', function() {
       // Realizar suscripciones
@@ -30,7 +30,7 @@ var ConexionBackend = (function( Ar ) {
   var _cerrar = function() { _conn = null; };
 
   var _consultaReactiva = function(nomColeccion, consulta) {
-    if ( !_conn) {
+  if ( !_conn) {
       throw 'No hay conexión con el backend';
     }
 
@@ -62,9 +62,12 @@ var ConexionBackend = (function( Ar ) {
     },
     iniciar: _iniciar,
     cerrar:  _cerrar,
-    sucesos: function() {
-      return _consultaReactiva('sucesos', {}).result;
-    },
+    sucesos: function(callback) {
+      return _consultaReactiva('sucesos', {}).on('change', function(s_id) {
+        var suceso = _consultaReactiva('sucesos', { _id: s_id }).result[0];
+        return callback(suceso);
+      });
+  },
     cambiosEnSucesos: function(callback) {
       return _consultaReactiva('sucesos', {}).on('change', function(s_id) {
         var suceso = _consultaReactiva('sucesos', { _id: s_id }).result[0];
@@ -77,7 +80,7 @@ var ConexionBackend = (function( Ar ) {
         descripcion: objeto.description,
         categoria: objeto.category,
         ubicacion: { type: 'Point', coordinates: [ objeto.lng, objeto.lat ] },
-        confirmacion: objeto.confirmation
+        confirmacion: objeto.confirmacion
       });
     },
     /* AVISO: Estas funciones asumen el hecho de que
@@ -87,10 +90,10 @@ var ConexionBackend = (function( Ar ) {
      * Ver: https://github.com/mondora/asteroid/issues/31
      */
     confirmarSuceso: function(objeto) {
-      return _actualizar('sucesos', objeto.id, { confirmacion: objeto.confirmation });
+      return _actualizar('sucesos', objeto.id, { confirmacion: objeto.confirmacion });
     },
     desmentirSuceso: function(objeto) {
-      return _actualizar('sucesos', objeto.id, { confirmacion: objeto.confirmation });
+      return _actualizar('sucesos', objeto.id, { confirmacion: objeto.confirmacion });
     }
   }
 

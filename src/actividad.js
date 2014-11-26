@@ -37,36 +37,44 @@ var Actividad = (function ( Sn, Geo, Marker ) {
   neutralIcon = new Icono({iconUrl: 'imagenes/smiley_neutral.png'});
   badIcon = new Icono({iconUrl: 'imagenes/caution.png'});
 
-  cargarPuntosGuardados = function() {
+
+  cargarUnPunto = function(puntos){
     var icons = {
       0: goodIcon,
       1: neutralIcon,
       2: badIcon
+    }  
+    var ic;
+    console.log("entra");
+    if ( typeof puntos === "undefined"){
+        return ;
     }
-    var puntos = ConexionBackend.sucesos();
-    for (var i=0; i < puntos.length; i++) {
-      var ic;
-      console.log("Confirmacion: "+puntos[i].confirmacion);
-      if(puntos[i].confirmacion > 0)
-      { ic=0; }else{
-          if(puntos[i].confirmacion == 0){ ic = 1; }
-          else{ ic = 2; }
+    console.log(puntos);
+      
+    if(puntos.confirmacion > 0){ 
+      ic=0; 
+    }else{
+      if(puntos.confirmacion == 0){ ic = 1; }
+        else{ ic = 2; }
       }
-      var pos = puntos[i].ubicacion.coordinates;
+      var pos = puntos.ubicacion.coordinates;
       var lMark = L.marker([pos[1], pos[0]], { icon: icons[ic] }).addTo(map);
       lMark.on('click', mostrarSuceso);
       var marker = new Marker(
-        puntos[i]._id,
-        puntos[i].nombre,
-        puntos[i].descripcion,
-        puntos[i].categoria,
-        puntos[i].confirmacion,
+        puntos._id,
+        puntos.nombre,
+        puntos.descripcion,
+        puntos.categoria,
+        puntos.confirmacion,
         pos[1],
         pos[0],
         lMark);
       guardarMarcador(marker, lMark._latlng);
-    }
-    updateBarraDeEstado();
+    updateBarraDeEstado();    
+  }    
+                 
+  cargarPuntosGuardados = function() {
+    var puntos = ConexionBackend.sucesos(cargarUnPunto);
   }
 
   cerrarSuceso = function(){
@@ -238,19 +246,19 @@ var Actividad = (function ( Sn, Geo, Marker ) {
 
   confirmarEvento = function(){
     console.log(marcadorActual);
-    marcadorActual.confirmation += 1;
+    marcadorActual.confirmacion += 1;
     ConexionBackend.confirmarSuceso(marcadorActual);
-    console.log("confirmacion: "+marcadorActual.confirmation);
-    if(marcadorActual.confirmation >= 1){
+    console.log("confirmacion: "+marcadorActual.confirmacion);
+    if(marcadorActual.confirmacion >= 1){
       marcadorActual.markerLeaflet.setIcon(goodIcon);
     }
   }
 
   desmentirEvento = function(){
-    marcadorActual.confirmation -= 1;
+    marcadorActual.confirmacion -= 1;
     ConexionBackend.desmentirSuceso(marcadorActual);
-    console.log("confirmacion: "+marcadorActual.confirmation);
-    if(marcadorActual.confirmation <= 0){
+    console.log("confirmacion: "+marcadorActual.confirmacion);
+    if(marcadorActual.confirmacion <= 0){
     	marcadorActual.markerLeaflet.setIcon(badIcon);
     }
   }
