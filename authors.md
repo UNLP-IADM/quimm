@@ -2,7 +2,6 @@
 _el orden no importa_
 
 - biojavier <javierbionex@hotmail.com>
-- Diego <paez.di@gmail.com>
 - Diego Paez <paez.di@gmail.com>
 - Ezequiel Claramunt <ezequiel.claramunt@gmail.com>
 - federico rufrancos <fde.ruf@gmail.com>
